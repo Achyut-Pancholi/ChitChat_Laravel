@@ -3,8 +3,15 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 
-# Install PHP 8.2 + extensions + tools
+# Install dependencies, add PPA for PHP 8.2, and install PHP + tools
 RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    curl \
+    unzip \
+    supervisor \
+    nginx \
+    && add-apt-repository ppa:ondrej/php -y \
+    && apt-get update && apt-get install -y \
     php8.2 \
     php8.2-cli \
     php8.2-fpm \
@@ -13,17 +20,9 @@ RUN apt-get update && apt-get install -y \
     php8.2-xml \
     php8.2-curl \
     php8.2-zip \
-    php8.2-pdo \
     php8.2-tokenizer \
     php8.2-bcmath \
     php8.2-gd \
-    nginx \
-    curl \
-    unzip \
-    supervisor \
-    software-properties-common \
-    && add-apt-repository ppa:ondrej/php \
-    && apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
