@@ -37,9 +37,11 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set folder permissions
+# Set folder permissions and create php-fpm socket dir
 RUN chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
+
+RUN mkdir -p /run/php
 
 # Copy nginx config
 COPY docker/nginx.conf /etc/nginx/sites-available/default
