@@ -50,8 +50,8 @@ RUN test -f .env || cp .env.example .env && php artisan key:generate --ansi
 RUN npm ci && npm run build
 
 # Set folder permissions and create php-fpm socket dir
-RUN chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache public/build \
+    && chown -R www-data:www-data storage bootstrap/cache public/build
 
 RUN mkdir -p /run/php
 
