@@ -57,6 +57,13 @@
         </div>
     </div>
 
+    {{-- Inject Reverb credentials from PHP config so Echo works regardless of build-time env --}}
+    <script>
+        window.__REVERB_KEY__  = "{{ config('broadcasting.connections.reverb.key') }}";
+        window.__REVERB_HOST__ = "{{ parse_url(config('app.url'), PHP_URL_HOST) }}";
+        window.__REVERB_PORT__ = 443;
+        window.__REVERB_TLS__  = true;
+    </script>
     @vite(['resources/js/app.js'])
     
     <script>
