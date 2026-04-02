@@ -46,6 +46,16 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Create a stub .env if not present (real values come from Render env vars at runtime)
 RUN test -f .env || cp .env.example .env && php artisan key:generate --ansi
 
+# Accept VITE_ vars as build args (must be available at npm build time, not just runtime)
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST
+ARG VITE_REVERB_PORT=443
+ARG VITE_REVERB_SCHEME=https
+ENV VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY
+ENV VITE_REVERB_HOST=$VITE_REVERB_HOST
+ENV VITE_REVERB_PORT=$VITE_REVERB_PORT
+ENV VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
+
 # Install Node dependencies and build frontend assets (generates public/build/manifest.json)
 RUN npm ci && npm run build
 
