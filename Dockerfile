@@ -38,6 +38,9 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Create a stub .env if not present (real values come from Render env vars at runtime)
+RUN test -f .env || cp .env.example .env && php artisan key:generate --ansi
+
 # Set folder permissions and create php-fpm socket dir
 RUN chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
@@ -52,4 +55,9 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "php artisan migrate --force && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+CMD ["sh", "-c", "\
+  php artisan config:cache && \
+  php artisan route:cache && \
+  php artisan view:cache && \
+  php artisan migrate --force && \
+  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
