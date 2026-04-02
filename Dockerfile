@@ -26,6 +26,11 @@ RUN apt-get update && apt-get install -y \
     php8.2-gd \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Node.js 20 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -40,6 +45,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Create a stub .env if not present (real values come from Render env vars at runtime)
 RUN test -f .env || cp .env.example .env && php artisan key:generate --ansi
+
+# Install Node dependencies and build frontend assets (generates public/build/manifest.json)
+RUN npm ci && npm run build
 
 # Set folder permissions and create php-fpm socket dir
 RUN chmod -R 775 storage bootstrap/cache \
